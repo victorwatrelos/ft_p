@@ -1,6 +1,6 @@
 #include "main_server.h"
 
-static t_param		*parse_param(int argc, char **argv)
+static t_param		*parse_param(int argc, const char *argv[])
 {
 	size_t		size;
 	t_param		*res;
@@ -24,7 +24,7 @@ static t_param		*parse_param(int argc, char **argv)
 	return (res);
 }
 
-int		main(int argc, char **argv)
+int		main(int argc, const char *argv[])
 {
 	t_param		*param;
 
