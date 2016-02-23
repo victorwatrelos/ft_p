@@ -1,0 +1,6 @@
+.DStore
+*.o
+serveur
+client
+*.dSYM
+*.a
