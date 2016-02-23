@@ -6,6 +6,7 @@
 # include <libft.h>
 
 # include "server_struct.h"
+# include "auth_client.h"
 
 int			launch_server(t_param *param);
 

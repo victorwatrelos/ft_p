@@ -24,8 +24,14 @@ static int			init_server(int sockfd, int port)
 
 static int			child(int sockfd)
 {
+	if (!auth_client(sockfd))
+	{
+		printf("Auth fail\n");
+		return (1);
+	}
+	printf("Auth succeed\n");
 	close(sockfd);
-	return (1);
+	return (0);
 }
 
 static int			listen_loop(socklen_t lg, int sockfd)

@@ -1,7 +1,22 @@
 #ifndef SHARED_STRUCT_H
 # define SHARED_STRUCT_H
 
-# define MAGIC 0x1234
+# include <stddef.h>
+# include <stdint.h>
+
+# define MAGIC_CMD 0x1234
+# define MAGIC_CONNECT_CLIENT 0x9897
+# define MAGIC_CONNECT_RESPONSE_SERVER 0x32343
+
+typedef struct		s_connect_response
+{
+	uint32_t		magic;
+}					t_connect_response;
+
+typedef struct		s_connect
+{
+	uint32_t		magic;
+}					t_connect;
 
 typedef struct		s_command
 {

@@ -9,4 +9,11 @@ typedef struct		s_param
 	uint32_t		port;
 }					t_param;
 
+typedef struct		s_cmd
+{
+	uint32_t		cmd;
+	char			str[16];
+	void			*fn;
+}					t_cmd;
+
 #endif

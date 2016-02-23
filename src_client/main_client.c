@@ -34,5 +34,6 @@ int 		main(int argc, const char *argv[])
 		printf("./client hostname port\n");
 		return (1);
 	}
+	connect_to_server(param);
 	return 0;
 }

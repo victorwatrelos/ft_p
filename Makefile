@@ -1,9 +1,18 @@
 CC= gcc
 FLAGS= -Wall -Wextra -g
 SRC_SERVEUR = src_server/main_server.c \
-			  src_server/launch_server.c
+			  src_server/launch_server.c \
+			  src_server/auth_client.c \
+			  src_common/send_data.c \
+			  src_common/recv_data.c
 
-SRC_CLIENT= src_client/main_client.c
+SRC_CLIENT= src_client/main_client.c \
+			src_client/connect_to_server.c \
+			src_client/loop_cmd.c \
+			src_client/str_utils.c \
+			src_client/cmd_ls.c \
+			src_common/send_data.c \
+			src_common/recv_data.c
 
 OBJ_SERVEUR= $(SRC_SERVEUR:.c=.o)
 OBJ_CLIENT= $(SRC_CLIENT:.c=.o)
