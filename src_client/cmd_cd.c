@@ -1,46 +1,17 @@
-#include "cmd_ls.h"
-
-static void	display_str(char *str, uint64_t str_size)
-{
-	uint64_t		i;
-	size_t			size;
-
-	i = 0;
-	while (i < str_size)
-	{
-		size = ft_strlen(str);
-		if (*str != '\0')
-		{
-			write(1, str, size);
-			write(1, "\n", 1);
-		}
-		size++;
-		str += size;
-		i += size;
-	}
-}
+#include "cmd_cd.h"
 
 static int	get_response(int sockfd)
 {
-	uint32_t	magic;
-	uint64_t	str_size;
-	char		*str;
+	uint32_t		magic;
 
 	if (!(recv_data(sockfd, &magic, sizeof(magic))))
 		return (0);
 	if (magic != MAGIC_CONF_SUCCESS)
 		return (0);
-	if (!(recv_data(sockfd, &str_size, sizeof(str_size))))
-		return (0);
-	if (!(str = malloc(sizeof(char) * (str_size + 1))))
-		return (0);
-	if (!(recv_data(sockfd, str, str_size)))
-		return (0);
-	display_str(str, str_size);
 	return (1);
 }
 
-int			cmd_ls(int sockfd, char *line, uint32_t cmd)
+int		cmd_cd(int sockfd, char *line, uint32_t cmd)
 {
 	t_command		command;
 	char			*end;

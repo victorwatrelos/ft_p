@@ -5,6 +5,7 @@
 
 # include <libft.h>
 
+# include "read_loop.h"
 # include "server_struct.h"
 # include "auth_client.h"
 

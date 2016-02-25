@@ -16,13 +16,15 @@ static int			init_client(int sockfd, int port, const char *host)
 static int			log_in(int sockfd)
 {
 	t_connect		connect;
+	uint32_t		con_resp;
 
 	connect.magic = MAGIC_CONNECT_CLIENT;
 	if (!send_data(sockfd, &connect, sizeof(connect)))
-	{
-		printf("Send fail\n");
 		return (0);
-	}
+	if (!recv_data(sockfd, &con_resp, sizeof(con_resp)))
+		return (0);
+	if (con_resp != MAGIC_CONNECT_RESPONSE_SERVER)
+		return (0);
 	return (1);
 }
 
@@ -41,7 +43,10 @@ int 				connect_to_server(t_param *param)
 		return (0);
 	}
 	if (!log_in(sockfd))
+	{
+		printf("Unable to log in\n");
 		return (0);
+	}
 	loop_cmd(sockfd);
 	return (1);
 }

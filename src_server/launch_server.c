@@ -30,6 +30,10 @@ static int			child(int sockfd)
 		return (1);
 	}
 	printf("Auth succeed\n");
+	if (!read_loop(sockfd))
+		printf("Client disconected\n");
+	else
+		printf("end loop end\n");
 	close(sockfd);
 	return (0);
 }
@@ -45,9 +49,7 @@ static int			listen_loop(socklen_t lg, int sockfd)
 	{
 		newsockfd = accept(sockfd, (struct sockaddr *)(&that), &lg);
 		if (newsockfd < 0)
-		{
 			printf("Fail to accept a new connection\n");
-		}
 		else
 		{
 			if ((pid = fork()) < 0)
@@ -57,7 +59,6 @@ static int			listen_loop(socklen_t lg, int sockfd)
 			else
 			{
 				close(newsockfd);
-				wait(&ret);
 			}
 		}
 	}

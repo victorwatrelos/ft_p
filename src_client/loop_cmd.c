@@ -32,8 +32,7 @@ static int			process_line(char *line, int sockfd)
 	if (!(cmd = get_cmd(tmp)))
 		return (0);
 	fn = cmd->fn;
-	fn(sockfd, end, cmd->cmd);
-	return (1);
+	return fn(sockfd, end, cmd->cmd);
 }
 
 int					loop_cmd(int sockfd)
@@ -44,7 +43,10 @@ int					loop_cmd(int sockfd)
 	while (1)
 	{
 		if ((ret = read(0, line, MAX_LINE_SIZE)) <= 0)
+		{
+			printf("Good bye\n");
 			return (0);
+		}
 		if (ret == 1)
 			continue ;
 		if (ret == MAX_LINE_SIZE)
@@ -53,6 +55,9 @@ int					loop_cmd(int sockfd)
 			continue ;
 		}
 		line[ret - 1] = '\0';
-		process_line(line, sockfd);
+		if (process_line(line, sockfd))
+			printf("SUCCESS\n");
+		else
+			printf("FAIL\n");
 	}
 }
