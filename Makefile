@@ -5,6 +5,8 @@ SRC_SERVEUR = src_server/main_server.c \
 			  src_server/auth_client.c \
 			  src_server/cmd_ls.c \
 			  src_server/cmd_cd_serv.c \
+			  src_server/cmd_pwd_serv.c \
+			  src_server/cmd_quit_serv.c \
 			  src_server/read_loop.c \
 			  src_server/test_path.c \
 			  src_common/send_data.c \
@@ -15,7 +17,9 @@ SRC_CLIENT= src_client/main_client.c \
 			src_client/loop_cmd.c \
 			src_client/str_utils.c \
 			src_client/cmd_ls.c \
+			src_client/cmd_pwd.c \
 			src_client/cmd_cd.c \
+			src_client/cmd_quit.c \
 			src_common/send_data.c \
 			src_common/recv_data.c
 

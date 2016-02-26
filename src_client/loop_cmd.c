@@ -43,10 +43,7 @@ int					loop_cmd(int sockfd)
 	while (1)
 	{
 		if ((ret = read(0, line, MAX_LINE_SIZE)) <= 0)
-		{
-			printf("Good bye\n");
 			return (0);
-		}
 		if (ret == 1)
 			continue ;
 		if (ret == MAX_LINE_SIZE)
@@ -55,9 +52,16 @@ int					loop_cmd(int sockfd)
 			continue ;
 		}
 		line[ret - 1] = '\0';
-		if (process_line(line, sockfd))
-			printf("SUCCESS\n");
-		else
+		if ((ret = process_line(line, sockfd)))
+		{
+			if (ret != -2)
+				printf("SUCCESS\n");
+			else
+				printf("FAIL\n");
+		}
+		else if (!ret)
 			printf("FAIL\n");
+		if (ret < 0)
+			return (0);
 	}
 }

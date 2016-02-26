@@ -30,13 +30,10 @@ static int	get_response(int sockfd)
 		return (0);
 	if (magic != MAGIC_CONF_SUCCESS)
 		return (0);
-	if (!(recv_data(sockfd, &str_size, sizeof(str_size))))
-		return (0);
-	if (!(str = malloc(sizeof(char) * (str_size + 1))))
-		return (0);
-	if (!(recv_data(sockfd, str, str_size)))
+	if (!(str = recv_string(sockfd, &str_size)))
 		return (0);
 	display_str(str, str_size);
+	free(str);
 	return (1);
 }
 

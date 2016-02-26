@@ -4,7 +4,6 @@ static int			init_server(int sockfd, int port)
 {
 	struct sockaddr_in  this;
 
-	printf("port: %d\n", port);
 	ft_bzero(&this, sizeof(this));
 	this.sin_family = AF_INET;
 	this.sin_port = htons(port);
@@ -26,14 +25,14 @@ static int			child(int sockfd)
 {
 	if (!auth_client(sockfd))
 	{
-		printf("Auth fail\n");
+		printf("Authentification fail\n");
 		return (1);
 	}
-	printf("Auth succeed\n");
-	if (!read_loop(sockfd))
+	printf("Authentification succeed\n");
+	if (read_loop(sockfd))
 		printf("Client disconected\n");
 	else
-		printf("end loop end\n");
+		printf("Error on disconnect\n");
 	close(sockfd);
 	return (0);
 }
@@ -43,7 +42,6 @@ static int			listen_loop(socklen_t lg, int sockfd)
 	int                 newsockfd;
 	struct sockaddr_in  that;
 	pid_t               pid;
-	int					ret;
 
 	while (1)
 	{
@@ -53,13 +51,11 @@ static int			listen_loop(socklen_t lg, int sockfd)
 		else
 		{
 			if ((pid = fork()) < 0)
-				printf("fork error\n");
+				printf("Fork error\n");
 			if (pid == 0)
 				child(newsockfd);
 			else
-			{
 				close(newsockfd);
-			}
 		}
 	}
 }
@@ -77,6 +73,7 @@ int				launch_server(t_param *param)
 	}
 	if (init_server(sockfd, param->port) < 0)
 		return (0);
+	printf("Server initialized on %d\n", param->port);
 	lg = (socklen_t)sizeof(struct sockaddr_in);
 	listen_loop(lg, sockfd);
 	return (1);

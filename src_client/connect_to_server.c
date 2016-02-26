@@ -48,5 +48,6 @@ int 				connect_to_server(t_param *param)
 		return (0);
 	}
 	loop_cmd(sockfd);
+	printf("Good bye\n");
 	return (1);
 }

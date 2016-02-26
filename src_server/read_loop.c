@@ -51,6 +51,7 @@ int					read_loop(int sockfd)
 	uint32_t		cmd;
 	int				(*fn_cmd)(int, t_serv_fs *);
 	t_serv_fs		serv_fs;
+	int				ret;
 
 	if (!(init_serv_fs(&serv_fs)))
 		return (0);
@@ -65,8 +66,10 @@ int					read_loop(int sockfd)
 			printf("Command not recognise\n");
 			continue ;
 		}
-		if (!(fn_cmd(sockfd, &serv_fs)))
+		if (!(ret = fn_cmd(sockfd, &serv_fs)))
 			printf("Command execution fail\n");
+		if (ret < 0)
+			return (1);
 	}
 	return (1);
 }

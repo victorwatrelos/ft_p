@@ -1,4 +1,5 @@
 #include "recv_data.h"
+#include <stdio.h>
 
 int		recv_data(int sockfd, void *buf, ssize_t size)
 {
@@ -14,20 +15,22 @@ int		recv_data(int sockfd, void *buf, ssize_t size)
 	return (1);
 }
 
-char	*recv_string(int sockfd)
+char	*recv_string(int sockfd, uint64_t *size)
 {
-	t_string		string;
 	char			*str;
+	uint64_t		str_size;
 
-	if (!(recv_data(sockfd, &string, sizeof(t_string))))
-		return (NULL);
-	if (!(str = malloc(string.size + 1)))
-		return (NULL);
-	if (!(recv_data(sockfd, str, string.size)))
+	if (!(recv_data(sockfd, &str_size, sizeof(str_size))))
+		return (0);
+	if (!(str = malloc(sizeof(char) * (str_size + 1))))
+		return (0);
+	if (!(recv_data(sockfd, str, str_size)))
 	{
 		free(str);
-		return (NULL);
+		return (0);
 	}
-	str[string.size] = '\0';
+	str[str_size] = '\0';
+	if (size)
+		*size = str_size;
 	return (str);
 }

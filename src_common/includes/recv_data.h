@@ -7,7 +7,7 @@
 # include <unistd.h>
 
 int 	recv_data(int sockfd, void *out, ssize_t size);
-char	*recv_string(int sockfd);
+char	*recv_string(int sockfd, uint64_t *size);
 
 
 #endif

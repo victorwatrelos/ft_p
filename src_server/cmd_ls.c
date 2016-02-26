@@ -70,7 +70,7 @@ int			cmd_ls_serv(int sockfd, t_serv_fs *serv_fs)
 	uint32_t		conf;
 
 	conf = MAGIC_CONF_FAIL;
-	if (!(path = recv_string(sockfd)))
+	if (!(path = recv_string(sockfd, NULL)))
 	{
 		send_data(sockfd, &conf, sizeof(conf));
 		return (0);
