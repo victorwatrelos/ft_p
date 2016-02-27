@@ -11,6 +11,7 @@
 # include "test_path.h"
 # include <stddef.h>
 # include <stdint.h>
+# include <sys/stat.h>
 
 int			cmd_ls_serv(int sockfd, t_serv_fs *serv_fs);
 

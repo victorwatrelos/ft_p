@@ -25,11 +25,41 @@ static char		*str_realloc_cat(char *s1, char *s2, uint64_t *size)
 	return (res);
 }
 
+static char		*get_name(char *name, char *path)
+{
+	char			*full_pathname;
+	char			*final_name;
+	size_t			size_path;
+	struct stat		st;
+
+	size_path = ft_strlen(path);
+	if (!(full_pathname = malloc(sizeof(char) * (ft_strlen(name) + size_path + 2))))
+		return (NULL);
+	ft_strcpy(full_pathname, path);
+	if (path[size_path - 1] != '/')
+		ft_strcat(full_pathname, "/");
+	ft_strcat(full_pathname, name);
+	if (lstat(full_pathname, &st) < 0)
+	{
+		free(full_pathname);
+		return (NULL);
+	}
+	free(full_pathname);
+	if (!(final_name = ft_strnew(ft_strlen(name) + 16)))
+		return (NULL);
+	if (S_ISDIR(st.st_mode))
+		ft_strcpy(final_name, "\e[34m");
+	ft_strcat(final_name, name);
+	ft_strcat(final_name, "\e[0m");
+	return (final_name);
+}
+
 static char		*get_str_ls(char *path, uint64_t *size)
 {
 	DIR				*dir;
 	struct dirent	*entry;
 	char			*str;
+	char			*name;
 
 	*size = 0;
 	if (!(str = malloc(sizeof(char))))
@@ -41,11 +71,18 @@ static char		*get_str_ls(char *path, uint64_t *size)
 	}
 	while ((entry = readdir(dir)) != NULL)
 	{
-		if (!(str = str_realloc_cat(str, entry->d_name, size)))
+		if (!(name = get_name(entry->d_name, path)))
 		{
 			closedir(dir);
 			return (NULL);
 		}
+		if (!(str = str_realloc_cat(str, name, size)))
+		{
+			free(name);
+			closedir(dir);
+			return (NULL);
+		}
+		free(name);
 	}
 	closedir(dir);
 	return (str);
