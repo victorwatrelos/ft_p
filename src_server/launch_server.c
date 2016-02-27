@@ -32,7 +32,7 @@ static int			child(int sockfd)
 	if (read_loop(sockfd))
 		printf("Client disconected\n");
 	else
-		printf("Error on disconnect\n");
+		printf("An error append, client disconnected\n");
 	close(sockfd);
 	return (0);
 }

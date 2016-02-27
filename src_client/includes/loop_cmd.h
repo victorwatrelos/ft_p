@@ -10,15 +10,19 @@
 # include "cmd_cd.h"
 # include "cmd_pwd.h"
 # include "cmd_quit.h"
+# include "cmd_get.h"
+# include "cmd_put.h"
 # include "client_struct.h"
 
-# define NB_CMD 4
+# define NB_CMD 6
 
 int		loop_cmd(int sockfd);
 
 static const t_cmd	LIST_CMD[NB_CMD] = {{1, "ls", &cmd_ls},
 										{2, "cd", &cmd_cd},
 										{3, "pwd", &cmd_pwd},
-										{4, "quit", &cmd_quit}};
+										{4, "quit", &cmd_quit},
+										{5, "get", &cmd_get},
+										{6, "put", &cmd_put}};
 
 #endif

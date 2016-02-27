@@ -9,7 +9,10 @@
 # include <stdint.h>
 # include <unistd.h>
 
+# define BUF_FILE_SIZE 4096
+
 int		send_data(int sockfd, void *data, ssize_t size);
 int		send_string(int sockfd, char *str, uint64_t size);
+int		send_file(int sockfd, int filefd);
 
 #endif
