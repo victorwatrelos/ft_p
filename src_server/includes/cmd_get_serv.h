@@ -9,6 +9,7 @@
 # include "server_struct.h"
 # include "shared_struct.h"
 # include "test_path.h"
+# include "str_utils.h"
 # include <stddef.h>
 # include <stdint.h>
 # include <sys/stat.h>

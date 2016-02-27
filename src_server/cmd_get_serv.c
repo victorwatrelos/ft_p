@@ -16,26 +16,38 @@ static char	*remove_filename(char *path)
 	return (res);
 }
 
-static int	get_file(char *path, t_serv_fs *serv_fs)
+static int	get_file_content(char *filename, char *pathname, t_serv_fs *serv_fs)
 {
 	int				fd;
 	struct stat		stat;
-	char			*pathname;
 
-	if (!(pathname = remove_filename(path)))
-		return (-1);
 	if (!test_rel_path(pathname, serv_fs->base_dir))
-	{
-		free(pathname);
 		return (-1);
-	}
-	free(pathname);
-	if ((fd = open(path, O_RDONLY)) < 0)
+	if ((fd = open(filename, O_RDONLY)) < 0)
 		return (-1);
 	if (fstat(fd, &stat) < 0)
 		return (-1);
 	if (!(stat.st_mode & S_IRUSR))
 		return (-1);
+	return (fd);
+}
+
+static int	get_file(char *path, t_serv_fs *serv_fs)
+{
+	char	*filename;
+	char	*pathname;
+	int		fd;
+
+	if (!(filename = add_dot_begining(path)))
+		return (-1);
+	if (!(pathname = remove_filename(filename)))
+	{
+		free(filename);
+		return (-1);
+	}
+	fd = get_file_content(filename, pathname, serv_fs);
+	free(filename);
+	free(pathname);
 	return (fd);
 }
 

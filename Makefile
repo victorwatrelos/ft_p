@@ -12,12 +12,13 @@ SRC_SERVEUR = src_server/main_server.c \
 			  src_server/read_loop.c \
 			  src_server/test_path.c \
 			  src_common/send_data.c \
+			  src_common/str_utils.c \
 			  src_common/recv_data.c
 
 SRC_CLIENT= src_client/main_client.c \
 			src_client/connect_to_server.c \
 			src_client/loop_cmd.c \
-			src_client/str_utils.c \
+			src_common/str_utils.c \
 			src_client/cmd_ls.c \
 			src_client/cmd_pwd.c \
 			src_client/cmd_cd.c \

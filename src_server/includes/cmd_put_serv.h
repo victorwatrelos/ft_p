@@ -12,6 +12,7 @@
 # include <stdint.h>
 # include <sys/stat.h>
 # include <fcntl.h>
+# include "str_utils.h"
 
 int			cmd_put_serv(int sockfd, t_serv_fs *serv_fs);
 
