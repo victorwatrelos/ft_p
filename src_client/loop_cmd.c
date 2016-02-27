@@ -31,9 +31,11 @@ static int			process_line(char *line, int sockfd, t_log *log)
 	ft_memcpy(tmp, line, size);
 	if (!(cmd = get_cmd(tmp)))
 	{
+		free(tmp);
 		add_line(log, INVALID_CMD);
 		return (0);
 	}
+	free(tmp);
 	fn = cmd->fn;
 	return fn(sockfd, end, cmd->cmd, log);
 }
@@ -50,7 +52,10 @@ int					loop_cmd(int sockfd)
 	{
 		ft_putstr("=>");
 		if ((ret = read(0, line, MAX_LINE_SIZE)) <= 0)
+		{
+			free(log);
 			return (0);
+		}
 		if (ret == 1)
 			continue ;
 		if (ret == MAX_LINE_SIZE)
@@ -66,7 +71,10 @@ int					loop_cmd(int sockfd)
 			add_line(log, FAILURE_MSG);
 		display_log(log);
 		if (log->to_deco)
+		{
+			free(log);
 			return (1);
+		}
 		free_log(log);
 	}
 }

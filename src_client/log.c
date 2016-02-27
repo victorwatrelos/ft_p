@@ -29,7 +29,7 @@ int		display_log(t_log *log)
 	size_t		i;
 
 	i = 0;
-	while (i < log->size_lst_event)
+	while (i < log->size_lst_event && i < MAX_HISTO)
 	{
 		if (log->list_event[i])
 			printf("%s\n", log->list_event[i]);

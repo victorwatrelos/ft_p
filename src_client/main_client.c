@@ -35,5 +35,6 @@ int 		main(int argc, const char *argv[])
 		return (1);
 	}
 	connect_to_server(param);
+	free(param);
 	return 0;
 }
