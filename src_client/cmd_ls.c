@@ -54,10 +54,7 @@ int			cmd_ls(int sockfd, char *line, uint32_t cmd, t_log *log)
 	command.magic = MAGIC_CMD;
 	command.command = cmd;
 	if (!get_param(line, &path))
-	{
-		add_line(log, INVALID_ARG_CD);
-		return (0);
-	}
+		path = ".";
 	if (!send_data(sockfd, &command, sizeof(t_command)))
 	{
 		add_line(log, SEND_CMD_FAIL);
