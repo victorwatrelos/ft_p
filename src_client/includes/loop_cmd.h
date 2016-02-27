@@ -13,6 +13,7 @@
 # include "cmd_get.h"
 # include "cmd_put.h"
 # include "client_struct.h"
+# include "log.h"
 
 # define NB_CMD 6
 
