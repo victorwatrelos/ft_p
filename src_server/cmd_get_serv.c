@@ -65,9 +65,11 @@ int			cmd_get_serv(int sockfd, t_serv_fs *serv_fs)
 	}
 	if ((filefd = get_file(path, serv_fs)) < 0)
 	{
+		free(path);
 		send_data(sockfd, &conf, sizeof(conf));
 		return (0);
 	}
+	free(path);
 	conf = MAGIC_CONF_SUCCESS;
 	if (!(send_data(sockfd, &conf, sizeof(conf))))
 	{
