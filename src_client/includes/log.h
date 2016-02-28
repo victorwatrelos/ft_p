@@ -26,6 +26,6 @@
 t_log	*get_log_struct(void);
 int		display_log(t_log *log);
 int		free_log(t_log *log);
-int		add_line(t_log *log, char *line);
+int		add_line(t_log *log, char *line, int to_deco);
 
 #endif

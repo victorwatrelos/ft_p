@@ -34,6 +34,7 @@ int 		main(int argc, const char *argv[])
 		printf("./client hostname port\n");
 		return (1);
 	}
+	signal(SIGPIPE, catch_client_sig);
 	connect_to_server(param);
 	free(param);
 	return 0;

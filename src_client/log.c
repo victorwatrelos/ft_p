@@ -10,8 +10,9 @@ t_log	*get_log_struct(void)
 	return (log);
 }
 
-int		add_line(t_log *log, char *line)
+int		add_line(t_log *log, char *line, int to_deco)
 {
+	log->to_deco |= to_deco;
 	log->size_lst_event++;
 	if (log->size_lst_event > MAX_HISTO)
 		return (0);

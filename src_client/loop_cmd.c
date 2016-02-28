@@ -32,7 +32,7 @@ static int			process_line(char *line, int sockfd, t_log *log)
 	if (!(cmd = get_cmd(tmp)))
 	{
 		free(tmp);
-		add_line(log, INVALID_CMD);
+		add_line(log, INVALID_CMD, 0);
 		return (0);
 	}
 	free(tmp);
@@ -66,9 +66,9 @@ int					loop_cmd(int sockfd)
 		line[ret - 1] = '\0';
 		process_line(line, sockfd, log);
 		if (!log->size_lst_event)
-			add_line(log, SUCCESS_MSG);
+			add_line(log, SUCCESS_MSG, 0);
 		else
-			add_line(log, FAILURE_MSG);
+			add_line(log, FAILURE_MSG, 0);
 		display_log(log);
 		if (log->to_deco)
 		{

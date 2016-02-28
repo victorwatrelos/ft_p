@@ -5,5 +5,6 @@
 
 # include "server_struct.h"
 # include "launch_server.h"
+# include "catch_signal.h"
 
 #endif

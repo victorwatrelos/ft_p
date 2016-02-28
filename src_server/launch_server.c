@@ -23,6 +23,7 @@ static int			init_server(int sockfd, int port)
 
 static int			child(int sockfd)
 {
+	g_sockfd = sockfd;
 	if (!auth_client(sockfd))
 	{
 		printf("Authentification fail\n");

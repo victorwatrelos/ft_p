@@ -6,12 +6,12 @@ static int	get_response(int sockfd, t_log *log)
 
 	if (!(recv_data(sockfd, &magic, sizeof(magic))))
 	{
-		add_line(log, RECV_MAGIC_CONF_FAIL);
+		add_line(log, RECV_MAGIC_CONF_FAIL, 1);
 		return (0);
 	}
 	if (magic != MAGIC_CONF_SUCCESS)
 	{
-		add_line(log, MAGIC_CONF_INVALID);
+		add_line(log, MAGIC_CONF_INVALID, 0);
 		return (0);
 	}
 	return (1);
@@ -26,17 +26,17 @@ int			cmd_cd(int sockfd, char *line, uint32_t cmd, t_log *log)
 	command.command = cmd;
 	if (!get_param(line, &path))
 	{
-		add_line(log, INVALID_ARG_CD);
+		add_line(log, INVALID_ARG_CD, 0);
 		return (0);
 	}
 	if (!send_data(sockfd, &command, sizeof(t_command)))
 	{
-		add_line(log, SEND_CMD_FAIL);
+		add_line(log, SEND_CMD_FAIL, 1);
 		return (0);
 	}
 	if  (!send_string(sockfd, path, ft_strlen(line)))
 	{
-		add_line(log, SEND_STRING_FAIL);
+		add_line(log, SEND_STRING_FAIL, 0);
 		return (0);
 	}
 	if (!(get_response(sockfd, log)))

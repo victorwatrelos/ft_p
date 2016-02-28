@@ -28,11 +28,14 @@ int		main(int argc, const char *argv[])
 {
 	t_param		*param;
 
+	g_sockfd = -1;
 	if (!(param = parse_param(argc, argv)))
 	{
 		printf("./serveur port\n");
 		return (1);
 	}
+	signal(SIGINT, catch_signal);
+	signal(SIGPIPE, catch_signal);
 	launch_server(param);
 	return (0);
 }
