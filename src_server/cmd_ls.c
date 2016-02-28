@@ -10,7 +10,7 @@ static char		*str_realloc_cat(char *s1, char *s2, uint64_t *size)
 	size_s1 = *size;
 	size_s2 = ft_strlen(s2);
 	final_size = size_s1 + size_s2 + 2;
-	if (!(res = malloc(final_size)))
+	if (!(res = ft_strnew(final_size)))
 		return (NULL);
 	if (*s1 == '\0')
 		ft_strcpy(res, s2);
@@ -62,7 +62,7 @@ static char		*get_str_ls(char *path, uint64_t *size)
 	char			*name;
 
 	*size = 0;
-	if (!(str = malloc(sizeof(char))))
+	if (!(str = ft_strnew(1)))
 		return (NULL);
 	if (!(dir = opendir(path)))
 	{
@@ -74,11 +74,13 @@ static char		*get_str_ls(char *path, uint64_t *size)
 		if (!(name = get_name(entry->d_name, path)))
 		{
 			closedir(dir);
+			free(str);
 			return (NULL);
 		}
 		if (!(str = str_realloc_cat(str, name, size)))
 		{
 			free(name);
+			free(str);
 			closedir(dir);
 			return (NULL);
 		}
@@ -114,13 +116,22 @@ int			cmd_ls_serv(int sockfd, t_serv_fs *serv_fs)
 	}
 	if (!(str = get_resp(&resp, path, serv_fs)))
 	{
+		free(path);
 		send_data(sockfd, &conf, sizeof(conf));
 		return (0);
 	}
+	free(path);
 	conf = MAGIC_CONF_SUCCESS;
 	if (!(send_data(sockfd, &conf, sizeof(conf))))
+	{
+		free(str);
 		return (0);
+	}
 	if (!(send_string(sockfd, str, resp.size)))
+	{
+		free(str);
 		return (0);
+	}
+	free(str);
 	return (1);
 }

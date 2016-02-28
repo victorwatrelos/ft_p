@@ -37,5 +37,6 @@ int		main(int argc, const char *argv[])
 	signal(SIGINT, catch_signal);
 	signal(SIGPIPE, catch_signal);
 	launch_server(param);
+	free(param);
 	return (0);
 }

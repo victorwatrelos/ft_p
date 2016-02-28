@@ -8,7 +8,7 @@
 
 typedef struct		s_param
 {
-	uint16_t		port;
+	uint32_t		port;
 }					t_param;
 
 typedef struct		s_cmd

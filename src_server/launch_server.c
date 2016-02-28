@@ -43,6 +43,7 @@ static int			listen_loop(socklen_t lg, int sockfd)
 	int                 newsockfd;
 	struct sockaddr_in  that;
 	pid_t               pid;
+	int					caca;
 
 	while (1)
 	{
@@ -54,9 +55,16 @@ static int			listen_loop(socklen_t lg, int sockfd)
 			if ((pid = fork()) < 0)
 				printf("Fork error\n");
 			if (pid == 0)
+			{
 				child(newsockfd);
+				exit(0);
+			}
 			else
+			{
 				close(newsockfd);
+				wait(&caca);
+				catch_signal(SIGINT);
+			}
 		}
 	}
 }
@@ -74,7 +82,7 @@ int				launch_server(t_param *param)
 	}
 	if (init_server(sockfd, param->port) < 0)
 		return (0);
-	printf("Server initialized on %d\n", param->port);
+	printf("Server initialized on %u\n", param->port);
 	lg = (socklen_t)sizeof(struct sockaddr_in);
 	listen_loop(lg, sockfd);
 	return (1);
