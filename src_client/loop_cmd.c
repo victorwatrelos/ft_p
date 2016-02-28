@@ -40,6 +40,24 @@ static int			process_line(char *line, int sockfd, t_log *log)
 	return fn(sockfd, end, cmd->cmd, log);
 }
 
+static int			manage_line_log(int sockfd, char *line, t_log *log)
+{
+	process_line(line, sockfd, log);
+	if (!log->size_lst_event)
+		add_line(log, SUCCESS_MSG, 0);
+	else
+		add_line(log, FAILURE_MSG, 0);
+	display_log(log);
+	if (log->to_deco)
+	{
+		free_log(log);
+		free(log);
+		return (1);
+	}
+	free_log(log);
+	return (0);
+}
+
 int					loop_cmd(int sockfd)
 {
 	char		line[MAX_LINE_SIZE + 1];
@@ -64,17 +82,7 @@ int					loop_cmd(int sockfd)
 			continue ;
 		}
 		line[ret - 1] = '\0';
-		process_line(line, sockfd, log);
-		if (!log->size_lst_event)
-			add_line(log, SUCCESS_MSG, 0);
-		else
-			add_line(log, FAILURE_MSG, 0);
-		display_log(log);
-		if (log->to_deco)
-		{
-			free(log);
+		if (manage_line_log(sockfd, line, log))
 			return (1);
-		}
-		free_log(log);
 	}
 }

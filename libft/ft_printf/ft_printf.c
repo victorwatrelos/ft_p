@@ -56,7 +56,7 @@ static void		ft_applied(va_list ap, char c, int *nb_char, int fd)
 	{
 		if ((res = va_arg(ap, char *)) == NULL)
 		{
-			nb_char += 6;
+			*nb_char += 6;
 			ft_putstr_fd("(null)", fd);
 			return ;
 		}

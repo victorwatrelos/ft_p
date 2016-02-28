@@ -24,6 +24,7 @@ void	ft_lstdelone(t_list **list, t_list *elem)
 	{
 		*list = cur->next;
 		free(cur);
+		return ;
 	}
 	last = cur;
 	cur = cur->next;

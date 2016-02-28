@@ -35,7 +35,6 @@ char	*recv_string(int sockfd, uint64_t *size)
 	return (str);
 }
 
-#include <errno.h>
 static uint64_t	ft_min(uint64_t p1, uint64_t p2)
 {
 	if (p1 < p2)

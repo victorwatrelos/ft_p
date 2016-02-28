@@ -9,7 +9,6 @@ static void	catch_sigint(void)
 		close(g_sockfd);
 		printf("Client disconnected\n");
 	}
-	printf("EXIT\n");
 	exit(0);
 }
 

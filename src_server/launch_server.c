@@ -43,7 +43,6 @@ static int			listen_loop(socklen_t lg, int sockfd)
 	int                 newsockfd;
 	struct sockaddr_in  that;
 	pid_t               pid;
-	int					caca;
 
 	while (1)
 	{
@@ -60,11 +59,7 @@ static int			listen_loop(socklen_t lg, int sockfd)
 				exit(0);
 			}
 			else
-			{
 				close(newsockfd);
-				wait(&caca);
-				catch_signal(SIGINT);
-			}
 		}
 	}
 }

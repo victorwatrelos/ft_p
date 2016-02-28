@@ -3,9 +3,7 @@
 int		send_data(int sockfd, void *buf, ssize_t size)
 {
 	ssize_t		ret;
-	int			flag;
 
-	flag = 1; 
 	while (size > 0)
 	{
 		if ((ret = write(sockfd, buf, size)) < 0)
