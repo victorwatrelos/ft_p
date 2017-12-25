@@ -14,7 +14,7 @@ typedef struct		s_param
 typedef struct		s_cmd
 {
 	void			*fn;
-	uint32_t		cmd;
+	char			*cmd;
 }					t_cmd;
 
 typedef struct		s_serv_fs

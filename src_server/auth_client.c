@@ -2,15 +2,14 @@
 
 int 	auth_client(int sockfd)
 {
-	t_connect			connect_in;
-	t_connect_response	resp;
+	char	command[4096];
 
-	if (!recv_data(sockfd, &connect_in, sizeof(connect_in)))
+	command[4095] = '\0';
+	if (recv_cmd(sockfd, command, 4095) < 0)
 		return (0);
-	if (connect_in.magic != MAGIC_CONNECT_CLIENT)
+	if (ft_strncmp(command, CMD_CONNECT, 4095) != 0)
 		return (0);
-	resp.magic = MAGIC_CONNECT_RESPONSE_SERVER;
-	if (!send_data(sockfd, &resp, sizeof(resp)))
+	if (!send_data(sockfd, CMD_CONNECT_RESPONSE "\n", ft_strlen(CMD_CONNECT_RESPONSE "\n")))
 		return (0);
 	return (1);
 }

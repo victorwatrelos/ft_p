@@ -1,6 +1,41 @@
 #include "recv_data.h"
 #include <stdio.h>
 
+int		recv_cmd(int sockfd, void *buff, ssize_t buff_size)
+{
+	static char		recv_buff[MAX_CMD_SIZE];
+	static ssize_t	recv_buff_index = 0;
+	char			tmp_buff[MAX_CMD_SIZE];
+	char			*new_line_pos;
+	ssize_t			recv_size;
+
+	recv_buff[MAX_CMD_SIZE - 1] = '\0';
+
+	new_line_pos = ft_strchr(recv_buff, (int)'\n');
+	if (new_line_pos == NULL)
+	{
+		if (recv_buff_index >= MAX_CMD_SIZE - 1)
+			return (-1);
+		printf("READ\n");
+		fflush(0);
+		recv_size = read(sockfd, recv_buff + recv_buff_index, (MAX_CMD_SIZE - 1) - recv_buff_index);
+		printf("Read: %s\n", recv_buff);
+		printf("END READ\n");
+		fflush(0);
+		if (recv_size <= 0)
+			return (-1);
+		recv_buff_index += recv_size;
+		return recv_cmd(sockfd, buff, buff_size);
+	}
+	if (buff_size < new_line_pos - recv_buff - 1)
+		return (-1);
+	ft_strncpy(buff, recv_buff, new_line_pos - recv_buff);
+	ft_strncpy(tmp_buff, recv_buff + (new_line_pos + 1 - recv_buff), MAX_CMD_SIZE - 1);
+	ft_strncpy(recv_buff, tmp_buff, MAX_CMD_SIZE - 1);
+	recv_buff_index -= (new_line_pos + 1 - recv_buff);
+	return 0;
+}
+
 int		recv_data(int sockfd, void *buf, ssize_t size)
 {
 	ssize_t		ret;
@@ -35,7 +70,7 @@ char	*recv_string(int sockfd, uint64_t *size)
 	return (str);
 }
 
-static uint64_t	ft_min(uint64_t p1, uint64_t p2)
+static uint64_t        ft_min(uint64_t p1, uint64_t p2)
 {
 	if (p1 < p2)
 		return (p1);

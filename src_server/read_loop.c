@@ -1,40 +1,53 @@
 #include "read_loop.h"
 
-static int			wait_for_cmd(int sockfd)
+static int			extract_cmd(char *full_command, char *dest, size_t size)
 {
-	uint32_t	magic;
-	int			nb_try;
+	char	*end_cmd;
+	size_t	size_to_cpy;
 
-	nb_try = NB_TRY_MAGIC;
-	while (nb_try)
+	if ((end_cmd = ft_strchr(full_command, (int)" ")) == NULL)
 	{
-		if (!recv_data(sockfd, &magic, sizeof(uint32_t)))
-				return (0);
-		if (magic != MAGIC_CMD)
-		{
-			printf("Magic invalid (%d)\n", nb_try);
-			nb_try--;
-			continue ;
-		}
+		ft_strncpy(dest, full_command, size);
 		return (1);
 	}
-	return (0);
+	size_to_cpy = end_cmd - full_command;
+	if (size_to_cpy > size - 1)
+		return (-1);
+	ft_strncpy(dest, full_command, size_to_cpy);
+	dest[size_to_cpy] = '\0';
+	return (1);
 }
 
-static void			*get_cmd(uint32_t cmd)
+static int		execute_cmd(int sockfd, t_serv_fs *serv_fs)
 {
+	char	command[MAX_CMD_SIZE];
+	char	cmd[4096];
+	int		(*fn_cmd)(int, t_serv_fs *);
 	int		i;
+	int		ret;
 
+	cmd[4095] = '\0';
+	if (recv_cmd(sockfd, command, MAX_CMD_SIZE - 1) < 0)
+		return (0);
+	if (extract_cmd(command, cmd, 4095) < 0)
+		return (0);
 	i = NB_CMD;
-	while (i--)
+	while (--i)
 	{
-		if (LIST_CMD[i].cmd == cmd)
-			return (LIST_CMD[i].fn);
+		if (ft_strncmp(cmd, LIST_CMD[i].cmd, 4096) != 0)
+			continue;
+		fn_cmd = LIST_CMD[i].fn;
+		ret = fn_cmd(sockfd, serv_fs);
+		if (ret < 0)
+			return (-1);
+		if (ret == 0)
+			return (0);
 	}
-	return (NULL);
+	printf("Unable to find cmd %s\n", cmd);
+	return (1);
 }
 
-static int			init_serv_fs(t_serv_fs *serv_fs)
+static int		init_serv_fs(t_serv_fs *serv_fs)
 {
 	if (!getcwd(serv_fs->cur_dir, MAX_PATH_SIZE))
 	{
@@ -48,8 +61,6 @@ static int			init_serv_fs(t_serv_fs *serv_fs)
 
 int					read_loop(int sockfd)
 {
-	uint32_t		cmd;
-	int				(*fn_cmd)(int, t_serv_fs *);
 	t_serv_fs		serv_fs;
 	int				ret;
 
@@ -57,17 +68,7 @@ int					read_loop(int sockfd)
 		return (0);
 	while (1)
 	{
-		if (!wait_for_cmd(sockfd))
-			return (0);
-		if (!recv_data(sockfd, &cmd, sizeof(uint32_t)))
-			return (0);
-		if (!(fn_cmd = get_cmd(cmd)))
-		{
-			printf("Command not recognise\n");
-			continue ;
-		}
-		if (!(ret = fn_cmd(sockfd, &serv_fs)))
-			printf("Command execution fail\n");
+		ret = execute_cmd(sockfd, &serv_fs);
 		if (ret < 0)
 			return (1);
 	}

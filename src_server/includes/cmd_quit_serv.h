@@ -4,6 +4,7 @@
 # include "server_struct.h"
 # include "send_data.h"
 # include "shared_struct.h"
+# include <libft.h>
 
 int			cmd_quit_serv(int sockfd, t_serv_fs *serv_fs);
 

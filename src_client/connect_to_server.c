@@ -15,15 +15,15 @@ static int			init_client(int sockfd, int port, const char *host)
 
 static int			log_in(int sockfd)
 {
-	t_connect		connect;
-	uint32_t		con_resp;
+	char	command[4096];
 
-	connect.magic = MAGIC_CONNECT_CLIENT;
-	if (!send_data(sockfd, &connect, sizeof(connect)))
+	command[4095] = '\0';
+	if (!send_data(sockfd, CMD_CONNECT "\n", ft_strlen(CMD_CONNECT "\n")))
 		return (0);
-	if (!recv_data(sockfd, &con_resp, sizeof(con_resp)))
+	if (recv_cmd(sockfd, &command, 4095) < 0)
 		return (0);
-	if (con_resp != MAGIC_CONNECT_RESPONSE_SERVER)
+	printf("Recv: %s\n", command);
+	if (ft_strncmp(command, CMD_CONNECT_RESPONSE, 4095) != 0)
 		return (0);
 	return (1);
 }
