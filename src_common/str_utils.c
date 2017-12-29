@@ -57,3 +57,30 @@ char			*add_dot_begining(char *path)
 	ft_strcat(res, path);
 	return (res);
 }
+
+char			*create_str_from_args(char **list_arg, size_t size_arg)
+{
+	char	*str;
+	size_t	i;
+	size_t	tot_len_args;
+
+	i = -1;
+	tot_len_args = 1;
+	while (++i < size_arg)
+		tot_len_args += ft_strlen(list_arg[i]) + 3;
+	if ((str = (char*)malloc(tot_len_args)) == NULL)
+		return (NULL);
+	str[0] = '\0';
+	i = 0;
+	while (i < size_arg)
+	{
+		ft_strcat(str, "\"");
+		ft_strcat(str, list_arg[i]);
+		++i;
+		if (i < size_arg)
+			ft_strcat(str, "\" ");
+		else
+			ft_strcat(str, "\"\n");
+	}
+	return str;
+}

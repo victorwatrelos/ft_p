@@ -25,11 +25,14 @@ int		recv_cmd(int sockfd, void *buff, ssize_t buff_size)
 		if (recv_size <= 0)
 			return (-1);
 		recv_buff_index += recv_size;
+		*(recv_buff + recv_buff_index) = '\0';
 		return recv_cmd(sockfd, buff, buff_size);
 	}
 	if (buff_size < new_line_pos - recv_buff - 1)
 		return (-1);
-	ft_strncpy(buff, recv_buff, new_line_pos - recv_buff);
+	recv_size = new_line_pos - recv_buff;
+	ft_strncpy(buff, recv_buff, recv_size);
+	((char *)buff)[recv_size] = '\0';
 	ft_strncpy(tmp_buff, recv_buff + (new_line_pos + 1 - recv_buff), MAX_CMD_SIZE - 1);
 	ft_strncpy(recv_buff, tmp_buff, MAX_CMD_SIZE - 1);
 	recv_buff_index -= (new_line_pos + 1 - recv_buff);

@@ -4,6 +4,7 @@
 # include <libft.h>
 # include <sys/stat.h>
 
+char			*create_str_from_args(char **list_arg, size_t size_arg);
 char			*jump_after_space(char *line);
 char			*jump_to_space(char *line);
 char			*add_dot_begining(char *path);

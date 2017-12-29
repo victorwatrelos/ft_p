@@ -6,6 +6,7 @@
 
 # include "client_struct.h"
 
+# define MALLOC_FAIL " - Malloc fail"
 # define INVALID_CMD " - Invalid command"
 # define SEND_CMD_FAIL " - Send command to server fail"
 # define SEND_STRING_FAIL " - Send string to server fail"

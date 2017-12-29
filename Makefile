@@ -14,7 +14,8 @@ SRC_SERVEUR = src_server/main_server.c \
 			  src_server/catch_signal.c \
 			  src_common/send_data.c \
 			  src_common/str_utils.c \
-			  src_common/recv_data.c
+			  src_common/recv_data.c \
+			  src_common/get_args.c
 
 SRC_CLIENT= src_client/main_client.c \
 			src_client/connect_to_server.c \
@@ -30,7 +31,8 @@ SRC_CLIENT= src_client/main_client.c \
 			src_client/log.c \
 			src_client/catch_client_sig.c \
 			src_common/send_data.c \
-			src_common/recv_data.c
+			src_common/recv_data.c \
+			src_common/get_args.c
 
 OBJ_SERVEUR= $(SRC_SERVEUR:.c=.o)
 OBJ_CLIENT= $(SRC_CLIENT:.c=.o)

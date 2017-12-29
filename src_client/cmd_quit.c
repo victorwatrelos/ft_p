@@ -19,6 +19,7 @@ int		cmd_quit(int sockfd, char *line, uint32_t cmd, t_log *log)
 		add_line(log, RECV_CMD_FAIL, 1);
 		return (0);
 	}
+	printf("Cmd quit confirmed: |%s|\n", command);
 	if (ft_strncmp(command, CMD_QUIT_CONFIRMED, 4096) != 0)
 	{
 		add_line(log, RECV_CONF_FAIL, 1);

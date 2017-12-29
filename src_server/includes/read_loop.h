@@ -14,7 +14,7 @@
 
 int					read_loop(int sockfd);
 
-static const t_cmd	LIST_CMD[NB_CMD] = {{cmd_ls_serv, ""},
+static const t_cmd	LIST_CMD[NB_CMD] = {{cmd_ls_serv, "\"" CMD_LS "\""},
 										{cmd_cd_serv, ""},
 										{cmd_pwd_serv, ""},
 										{cmd_quit_serv, CMD_QUIT},

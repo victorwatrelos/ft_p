@@ -11,10 +11,11 @@
 # define MAGIC_CONNECT_RESPONSE_SERVER 0x32343
 
 #define MAX_CMD_SIZE 65535
-#define CMD_CONNECT "CONNECT"
-#define CMD_CONNECT_RESPONSE "CONNECTED"
-#define CMD_QUIT "QUIT"
-#define CMD_QUIT_CONFIRMED "QUIT CONFIRMED"
+#define CMD_CONNECT "\"CONNECT\""
+#define CMD_CONNECT_RESPONSE "\"CONNECTED\""
+#define CMD_QUIT "\"QUIT\""
+#define CMD_QUIT_CONFIRMED "\"QUIT CONFIRMED\""
+#define CMD_LS "LS"
 
 typedef struct						s_connect_response
 {

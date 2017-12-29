@@ -5,14 +5,19 @@ static int			extract_cmd(char *full_command, char *dest, size_t size)
 	char	*end_cmd;
 	size_t	size_to_cpy;
 
-	if ((end_cmd = ft_strchr(full_command, (int)" ")) == NULL)
+	printf("Extract from: %s\n", full_command);
+	if ((end_cmd = ft_strchr(full_command, (int)' ')) == NULL)
 	{
 		ft_strncpy(dest, full_command, size);
+		printf("No param, returning: %s\n", dest);
 		return (1);
 	}
 	size_to_cpy = end_cmd - full_command;
 	if (size_to_cpy > size - 1)
+	{
+		printf("Error in size\n");
 		return (-1);
+	}
 	ft_strncpy(dest, full_command, size_to_cpy);
 	dest[size_to_cpy] = '\0';
 	return (1);
@@ -28,12 +33,13 @@ static int		execute_cmd(int sockfd, t_serv_fs *serv_fs)
 
 	cmd[4095] = '\0';
 	if (recv_cmd(sockfd, command, MAX_CMD_SIZE - 1) < 0)
-		return (0);
+		return (-1);
 	if (extract_cmd(command, cmd, 4095) < 0)
 		return (0);
 	i = NB_CMD;
-	while (--i)
+	while (i--)
 	{
+		printf("%s | %s\n", cmd, LIST_CMD[i].cmd);
 		if (ft_strncmp(cmd, LIST_CMD[i].cmd, 4096) != 0)
 			continue;
 		fn_cmd = LIST_CMD[i].fn;

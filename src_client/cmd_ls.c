@@ -48,21 +48,23 @@ static int	get_response(int sockfd, t_log *log)
 
 int			cmd_ls(int sockfd, char *line, uint32_t cmd, t_log *log)
 {
-	t_command		command;
-	char			*path;
+	char			*cmd_to_serv;
+	char			*cmd_args[2];
 
-	command.magic = MAGIC_CMD;
-	command.command = cmd;
-	if (!get_param(line, &path))
-		path = ".";
-	if (!send_data(sockfd, &command, sizeof(t_command)))
+	(void)cmd;
+	if (!get_param(line, cmd_args + 1))
+		cmd_args[1] = ".";
+	cmd_args[0] = CMD_LS;
+	if ((cmd_to_serv = create_str_from_args(cmd_args, 2)) == NULL)
+	{
+		ft_putstr("Malloc fail\n");
+		exit(1);
+	}
+	printf("Cmd: |%s|\n", cmd_to_serv);
+	if (!send_data(sockfd, cmd_to_serv, ft_strlen(cmd_to_serv)))
 	{
 		add_line(log, SEND_CMD_FAIL, 1);
-		return (0);
-	}
-	if  (!send_string(sockfd, path, ft_strlen(path)))
-	{
-		add_line(log, SEND_STRING_FAIL, 1);
+		free(cmd_to_serv);
 		return (0);
 	}
 	if (!(get_response(sockfd, log)))
