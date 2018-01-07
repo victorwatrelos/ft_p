@@ -13,6 +13,6 @@
 # include <stdint.h>
 # include <sys/stat.h>
 
-int			cmd_ls_serv(int sockfd, t_serv_fs *serv_fs);
+int			cmd_ls_serv(int fd, t_serv_fs *serv_fs, char **args, int nb_args);
 
 #endif

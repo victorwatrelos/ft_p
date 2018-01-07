@@ -1,59 +1,48 @@
 #include "read_loop.h"
 
-static int			extract_cmd(char *full_command, char *dest, size_t size)
+static int	exe_from_arg(int fd, char **args, int nb_args, t_serv_fs *serv_fs)
 {
-	char	*end_cmd;
-	size_t	size_to_cpy;
+	t_cmd_fn	fn_cmd;
+	int			i;
+	int			ret;
 
-	printf("Extract from: %s\n", full_command);
-	if ((end_cmd = ft_strchr(full_command, (int)' ')) == NULL)
-	{
-		ft_strncpy(dest, full_command, size);
-		printf("No param, returning: %s\n", dest);
-		return (1);
-	}
-	size_to_cpy = end_cmd - full_command;
-	if (size_to_cpy > size - 1)
-	{
-		printf("Error in size\n");
-		return (-1);
-	}
-	ft_strncpy(dest, full_command, size_to_cpy);
-	dest[size_to_cpy] = '\0';
-	return (1);
-}
-
-static int		execute_cmd(int sockfd, t_serv_fs *serv_fs)
-{
-	char	command[MAX_CMD_SIZE];
-	char	cmd[4096];
-	int		(*fn_cmd)(int, t_serv_fs *);
-	int		i;
-	int		ret;
-
-	cmd[4095] = '\0';
-	if (recv_cmd(sockfd, command, MAX_CMD_SIZE - 1) < 0)
-		return (-1);
-	if (extract_cmd(command, cmd, 4095) < 0)
+	if (nb_args < 1)
 		return (0);
 	i = NB_CMD;
 	while (i--)
 	{
-		printf("%s | %s\n", cmd, LIST_CMD[i].cmd);
-		if (ft_strncmp(cmd, LIST_CMD[i].cmd, 4096) != 0)
+		printf("%s | %s\n", args[0], LIST_CMD[i].cmd);
+		if (ft_strncmp(args[0], LIST_CMD[i].cmd, 4096) != 0)
 			continue;
 		fn_cmd = LIST_CMD[i].fn;
-		ret = fn_cmd(sockfd, serv_fs);
+		ret = fn_cmd(fd, serv_fs, args, nb_args);
 		if (ret < 0)
 			return (-1);
-		if (ret == 0)
-			return (0);
+		return (1);
 	}
-	printf("Unable to find cmd %s\n", cmd);
-	return (1);
+	return (0);
 }
 
-static int		init_serv_fs(t_serv_fs *serv_fs)
+static int	execute_cmd(int sockfd, t_serv_fs *serv_fs)
+{
+	char	command[MAX_CMD_SIZE];
+	char	**args;
+	int		nb_args;
+	int		ret;
+
+	command[4095] = '\0';
+	if (recv_cmd(sockfd, command, MAX_CMD_SIZE - 1) < 0)
+		return (-1);
+	nb_args = get_args(command, &args);
+	if (nb_args < 0)
+		return (-1);
+	if ((ret = exe_from_arg(sockfd, args, nb_args, serv_fs)) < 1)
+		printf("Unable to find cmd %s\n", command);
+	free_args(&args, nb_args);
+	return (ret);
+}
+
+static int	init_serv_fs(t_serv_fs *serv_fs)
 {
 	if (!getcwd(serv_fs->cur_dir, MAX_PATH_SIZE))
 	{
@@ -65,7 +54,7 @@ static int		init_serv_fs(t_serv_fs *serv_fs)
 	return (1);
 }
 
-int					read_loop(int sockfd)
+int			read_loop(int sockfd)
 {
 	t_serv_fs		serv_fs;
 	int				ret;

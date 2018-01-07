@@ -6,6 +6,6 @@
 # include "shared_struct.h"
 # include <libft.h>
 
-int			cmd_quit_serv(int sockfd, t_serv_fs *serv_fs);
+int			cmd_quit_serv(int sockfd, t_serv_fs *serv_fs, char **args, int nb_args);
 
 #endif

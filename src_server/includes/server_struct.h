@@ -11,16 +11,18 @@ typedef struct		s_param
 	uint32_t		port;
 }					t_param;
 
-typedef struct		s_cmd
-{
-	void			*fn;
-	char			*cmd;
-}					t_cmd;
-
 typedef struct		s_serv_fs
 {
 	char			cur_dir[MAX_PATH_SIZE + 1];
 	char			base_dir[MAX_PATH_SIZE + 1];
 }					t_serv_fs;
+
+typedef int (*t_cmd_fn)(int, t_serv_fs *, char **, int);
+
+typedef struct		s_cmd
+{
+	t_cmd_fn		fn;
+	char			*cmd;
+}					t_cmd;
 
 #endif

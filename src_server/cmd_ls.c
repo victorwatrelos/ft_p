@@ -101,7 +101,7 @@ static char		*get_resp(t_string *resp, char *path, t_serv_fs *serv_fs)
 	return (str);
 }
 
-int			cmd_ls_serv(int sockfd, t_serv_fs *serv_fs)
+int			cmd_ls_serv(int fd, t_serv_fs *serv_fs, char **args, int nb_args)
 {
 	char			*path;
 	t_string		resp;
@@ -109,25 +109,25 @@ int			cmd_ls_serv(int sockfd, t_serv_fs *serv_fs)
 	uint32_t		conf;
 
 	conf = MAGIC_CONF_FAIL;
-	if (!(path = recv_string(sockfd, NULL)))
+	if (!(path = recv_string(fd, NULL)))
 	{
-		send_data(sockfd, &conf, sizeof(conf));
+		send_data(fd, &conf, sizeof(conf));
 		return (0);
 	}
 	if (!(str = get_resp(&resp, path, serv_fs)))
 	{
 		free(path);
-		send_data(sockfd, &conf, sizeof(conf));
+		send_data(fd, &conf, sizeof(conf));
 		return (0);
 	}
 	free(path);
 	conf = MAGIC_CONF_SUCCESS;
-	if (!(send_data(sockfd, &conf, sizeof(conf))))
+	if (!(send_data(fd, &conf, sizeof(conf))))
 	{
 		free(str);
 		return (0);
 	}
-	if (!(send_string(sockfd, str, resp.size)))
+	if (!(send_string(fd, str, resp.size)))
 	{
 		free(str);
 		return (0);
