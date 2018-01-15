@@ -51,6 +51,7 @@ int			cmd_ls(int sockfd, char *line, uint32_t cmd, t_log *log)
 	char			*cmd_to_serv;
 	char			*cmd_args[2];
 
+	printf("LS line: %s\n", line);
 	(void)cmd;
 	if (!get_param(line, cmd_args + 1))
 		cmd_args[1] = ".";

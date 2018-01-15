@@ -16,9 +16,7 @@ static int	exe_from_arg(int fd, char **args, int nb_args, t_serv_fs *serv_fs)
 			continue;
 		fn_cmd = LIST_CMD[i].fn;
 		ret = fn_cmd(fd, serv_fs, args, nb_args);
-		if (ret < 0)
-			return (-1);
-		return (1);
+		return ret;
 	}
 	return (0);
 }
@@ -36,7 +34,7 @@ static int	execute_cmd(int sockfd, t_serv_fs *serv_fs)
 	nb_args = get_args(command, &args);
 	if (nb_args < 0)
 		return (-1);
-	if ((ret = exe_from_arg(sockfd, args, nb_args, serv_fs)) < 1)
+	if ((ret = exe_from_arg(sockfd, args, nb_args, serv_fs)) == 0)
 		printf("Unable to find cmd %s\n", command);
 	free_args(&args, nb_args);
 	return (ret);
