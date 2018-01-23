@@ -6,7 +6,6 @@
 # include "send_data.h"
 # include "recv_data.h"
 # include "client_struct.h"
-# include "log.h"
 # include "get_param.h"
 
 # include <libft.h>
@@ -14,6 +13,6 @@
 # include <stdio.h>
 # include <stdint.h>
 
-int			cmd_ls(int sockfd, char *line, uint32_t cmd, t_log *log);
+int			cmd_ls(int sockfd, char *line, uint32_t cmd, t_param *param);
 
 #endif

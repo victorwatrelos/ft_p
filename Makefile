@@ -28,7 +28,6 @@ SRC_CLIENT= src_client/main_client.c \
 			src_client/cmd_put.c \
 			src_client/cmd_get.c \
 			src_client/get_param.c \
-			src_client/log.c \
 			src_client/catch_client_sig.c \
 			src_client/get_data_from_socket.c \
 			src_common/send_data.c \

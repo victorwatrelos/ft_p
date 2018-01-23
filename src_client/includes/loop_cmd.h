@@ -13,11 +13,10 @@
 # include "cmd_get.h"
 # include "cmd_put.h"
 # include "client_struct.h"
-# include "log.h"
 
 # define NB_CMD 6
 
-int		loop_cmd(int sockfd);
+int		loop_cmd(int sockfd, t_param *param);
 
 static const t_cmd	LIST_CMD[NB_CMD] = {{1, "ls", &cmd_ls},
 										{2, "cd", &cmd_cd},

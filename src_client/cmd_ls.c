@@ -1,52 +1,32 @@
 #include "cmd_ls.h"
 
-static void	display_str(char *str, uint64_t str_size)
+static int  extract_port(char *str)
 {
-	uint64_t		i;
-	size_t			size;
+	int		port;
 
-	i = 0;
-	while (i < str_size)
-	{
-		size = ft_strlen(str);
-		if (*str != '\0')
-		{
-			write(1, str, size);
-			write(1, "\n", 1);
-		}
-		size++;
-		str += size;
-		i += size;
-	}
+	if (ft_strncmp(str, "SEND_DATA:", 10) != 0)
+		return (-1);
+	port = ft_atoi(str + 10);
+	if (port <= 0 || port > 65535)
+		return (-1);
+	return (port);
 }
 
-static int	get_response(int sockfd, t_log *log)
+static int	get_response(int sockfd, t_param *param)
 {
-	uint32_t	magic;
-	uint64_t	str_size;
-	char		*str;
+	char		buff[4096];
+	int			port;
 
-	if (!(recv_data(sockfd, &magic, sizeof(magic))))
-	{
-		add_line(log, RECV_MAGIC_CONF_FAIL, 1);
-		return (0);
-	}
-	if (magic != MAGIC_CONF_SUCCESS)
-	{
-		add_line(log, MAGIC_CONF_INVALID, 0);
-		return (0);
-	}
-	if (!(str = recv_string(sockfd, &str_size)))
-	{
-		add_line(log, RECV_STRING_FAIL, 1);
-		return (0);
-	}
-	display_str(str, str_size);
-	free(str);
+	(void)param;
+	buff[4095] = '\0';
+	if (recv_cmd(sockfd, buff, 4095) < 0)
+		return (-1);
+	if ((port = extract_port(buff)) < 0)
+		return (-1);
 	return (1);
 }
 
-int			cmd_ls(int sockfd, char *line, uint32_t cmd, t_log *log)
+int			cmd_ls(int sockfd, char *line, uint32_t cmd, t_param *param)
 {
 	char			*cmd_to_serv;
 	char			*cmd_args[2];
@@ -64,11 +44,12 @@ int			cmd_ls(int sockfd, char *line, uint32_t cmd, t_log *log)
 	printf("Cmd: |%s|\n", cmd_to_serv);
 	if (!send_data(sockfd, cmd_to_serv, ft_strlen(cmd_to_serv)))
 	{
-		add_line(log, SEND_CMD_FAIL, 1);
+		param->to_deco = 1;
+		printf(SEND_CMD_FAIL "\n");
 		free(cmd_to_serv);
 		return (0);
 	}
-	if (!(get_response(sockfd, log)))
+	if (!(get_response(sockfd, param)))
 		return (0);
 	return (1);
 }

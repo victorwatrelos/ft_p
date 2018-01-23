@@ -5,10 +5,9 @@
 # include "recv_data.h"
 # include "shared_struct.h"
 # include "client_struct.h"
-# include "log.h"
 
 # include <stdint.h>
 
-int		cmd_quit(int sockfd, char *line, uint32_t cmd, t_log *log);
+int		cmd_quit(int sockfd, char *line, uint32_t cmd, t_param *param);
 
 #endif

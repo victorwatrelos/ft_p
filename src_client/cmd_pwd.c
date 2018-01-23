@@ -1,6 +1,6 @@
 #include "cmd_pwd.h"
 
-static int	get_response(int sockfd, t_log *log)
+static int	get_response(int sockfd, t_param *param)
 {
 	uint32_t	magic;
 	uint64_t	str_size;
@@ -8,17 +8,19 @@ static int	get_response(int sockfd, t_log *log)
 
 	if (!(recv_data(sockfd, &magic, sizeof(magic))))
 	{
-		add_line(log, RECV_MAGIC_CONF_FAIL, 1);
+		param->to_deco = 1;
+		printf(RECV_MAGIC_CONF_FAIL "\n");
 		return (0);
 	}
 	if (magic != MAGIC_CONF_SUCCESS)
 	{
-		add_line(log, MAGIC_CONF_INVALID, 0);
+		printf(MAGIC_CONF_INVALID "\n");
 		return (0);
 	}
 	if (!(str = recv_string(sockfd, &str_size)))
 	{
-		add_line(log, RECV_STRING_FAIL, 1);
+		param->to_deco = 1;
+		printf(RECV_STRING_FAIL "\n");
 		return (0);
 	}
 	printf("Server directory: %s\n", str);
@@ -26,7 +28,7 @@ static int	get_response(int sockfd, t_log *log)
 	return (1);
 }
 
-int			cmd_pwd(int sockfd, char *line, uint32_t cmd, t_log *log)
+int			cmd_pwd(int sockfd, char *line, uint32_t cmd, t_param *param)
 {
 	t_command		command;
 
@@ -35,10 +37,11 @@ int			cmd_pwd(int sockfd, char *line, uint32_t cmd, t_log *log)
 	command.command = cmd;
 	if (!send_data(sockfd, &command, sizeof(t_command)))
 	{
-		add_line(log, SEND_CMD_FAIL, 1);
+		param->to_deco = 1;
+		printf(SEND_CMD_FAIL "\n");
 		return (0);
 	}
-	if (!(get_response(sockfd, log)))
+	if (!(get_response(sockfd, param)))
 		return (0);
 	return (1);
 }

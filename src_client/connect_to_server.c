@@ -47,7 +47,7 @@ int 				connect_to_server(t_param *param)
 		printf("Unable to log in\n");
 		return (0);
 	}
-	loop_cmd(sockfd);
+	loop_cmd(sockfd, param);
 	printf("Good bye\n");
 	return (1);
 }

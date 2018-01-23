@@ -1,6 +1,6 @@
 #include "cmd_put.h"
 
-static int	send_file_data(int sockfd, char *src, char *dst, t_log *log)
+static int	send_file_data(int sockfd, char *src, char *dst, t_param *param)
 {
 	int				filefd;
 	t_command		command;
@@ -9,45 +9,49 @@ static int	send_file_data(int sockfd, char *src, char *dst, t_log *log)
 	command.command = 6;
 	if ((filefd = open(src, O_RDONLY)) < 0)
 	{
-		add_line(log, FILE_OPENING_FAIL, 0);
+		printf(FILE_OPENING_FAIL "\n");
 		return (0);
 	}
 	if (!send_data(sockfd, &command, sizeof(t_command)))
 	{
-		add_line(log, SEND_CMD_FAIL, 1);
+		param->to_deco = 1;
+		printf(SEND_CMD_FAIL "\n");
 		return (0);
 	}
 	if  (!send_string(sockfd, dst, ft_strlen(dst)))
 	{
-		add_line(log, SEND_STRING_FAIL, 1);
+		param->to_deco = 1;
+		printf(SEND_STRING_FAIL "\n");
 		return (0);
 	}
 	if (!send_file(sockfd, filefd))
 	{
-		add_line(log, SEND_FILE_FAIL, 1);
+		param->to_deco = 1;
+		printf(SEND_FILE_FAIL "\n");
 		return (0);
 	}
 	return (1);
 }
 
-static int	get_response(int sockfd, t_log *log)
+static int	get_response(int sockfd, t_param *param)
 {
 	uint32_t	magic;
 
 	if (!(recv_data(sockfd, &magic, sizeof(magic))))
 	{
-		add_line(log, RECV_MAGIC_CONF_FAIL, 1);
+		param->to_deco = 1;
+		printf(RECV_MAGIC_CONF_FAIL "\n");
 		return (0);
 	}
 	if (magic != MAGIC_CONF_SUCCESS)
 	{
-		add_line(log, MAGIC_CONF_INVALID, 0);
+		printf(MAGIC_CONF_INVALID "\n");
 		return (0);
 	}
 	return (1);
 }
 
-int			cmd_put(int sockfd, char *line, uint32_t cmd, t_log *log)
+int			cmd_put(int sockfd, char *line, uint32_t cmd, t_param *param)
 {
 	char			*src;
 	char			*dst;
@@ -55,12 +59,12 @@ int			cmd_put(int sockfd, char *line, uint32_t cmd, t_log *log)
 	(void)cmd;
 	if (!get_2_params(line, &src, &dst))
 	{
-		add_line(log, INVALID_ARG_PUT, 0);
+		printf(INVALID_ARG_PUT "\n");
 		return (0);
 	}
-	if (!send_file_data(sockfd, src, dst, log))
+	if (!send_file_data(sockfd, src, dst, param))
 		return (0);
-	if (!get_response(sockfd, log))
+	if (!get_response(sockfd, param))
 		return (0);
 	return (1);
 }
