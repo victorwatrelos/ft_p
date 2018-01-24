@@ -16,6 +16,8 @@ static int	get_response(int sockfd, t_param *param)
 {
 	char		buff[4096];
 	int			port;
+	char		*resp;
+	int			size_resp;
 
 	(void)param;
 	buff[4095] = '\0';
@@ -23,6 +25,7 @@ static int	get_response(int sockfd, t_param *param)
 		return (-1);
 	if ((port = extract_port(buff)) < 0)
 		return (-1);
+	get_data_from_socket(port, size_resp, param->host);
 	return (1);
 }
 
@@ -49,7 +52,7 @@ int			cmd_ls(int sockfd, char *line, uint32_t cmd, t_param *param)
 		free(cmd_to_serv);
 		return (0);
 	}
-	if (!(get_response(sockfd, param)))
+	if (get_response(sockfd, param) < 0)
 		return (0);
 	return (1);
 }

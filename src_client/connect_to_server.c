@@ -1,13 +1,16 @@
 #include "connect_to_server.h"
+#include "netdb.h"
 
 static int			init_client(int sockfd, int port, const char *host)
 {
 	struct sockaddr_in  to;
+	struct hostent		*server;
 
+	server = gethostbyname(host);		
 	ft_bzero(&to, sizeof(to));
 	to.sin_family = AF_INET;
 	to.sin_port = htons(port);
-	to.sin_addr.s_addr = inet_addr(host);
+	ft_memmove(server->h_addr, &to.sin_addr.s_addr, server->h_length);
 	if (connect(sockfd, (struct sockaddr *)&to, sizeof(struct sockaddr_in)) < 0)
 		return (0);
 	return (1);
