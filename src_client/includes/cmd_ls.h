@@ -7,6 +7,7 @@
 # include "recv_data.h"
 # include "client_struct.h"
 # include "get_param.h"
+# include "get_data_from_socket.h"
 
 # include <libft.h>
 

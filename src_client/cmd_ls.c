@@ -25,7 +25,7 @@ static int	get_response(int sockfd, t_param *param)
 		return (-1);
 	if ((port = extract_port(buff)) < 0)
 		return (-1);
-	get_data_from_socket(port, size_resp, param->host);
+	resp = get_data_from_socket(port, &size_resp);
 	return (1);
 }
 

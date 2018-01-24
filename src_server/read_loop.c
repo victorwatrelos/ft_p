@@ -52,11 +52,12 @@ static int	init_serv_fs(t_serv_fs *serv_fs)
 	return (1);
 }
 
-int			read_loop(int sockfd)
+int			read_loop(int sockfd, struct in_addr *client_addr)
 {
 	t_serv_fs		serv_fs;
 	int				ret;
 
+	serv_fs.client_addr = client_addr;
 	if (!(init_serv_fs(&serv_fs)))
 		return (0);
 	while (1)

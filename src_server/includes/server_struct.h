@@ -15,6 +15,8 @@ typedef struct		s_serv_fs
 {
 	char			cur_dir[MAX_PATH_SIZE + 1];
 	char			base_dir[MAX_PATH_SIZE + 1];
+	struct in_addr	*client_addr;
+	
 }					t_serv_fs;
 
 typedef int (*t_cmd_fn)(int, t_serv_fs *, char **, int);

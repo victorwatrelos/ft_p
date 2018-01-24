@@ -13,6 +13,7 @@ static int			init_server(int sockfd, int port)
 		printf("Data server could not init the connection\n");
 		return (-1);
 	}
+	printf("Listen\n");
 	if (listen(sockfd, 1) < 0)
 	{
 		printf("Data server could not listen\n");

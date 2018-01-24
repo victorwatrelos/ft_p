@@ -21,8 +21,11 @@ static int			init_server(int sockfd, int port)
 	return (0);
 }
 
-static int			child(int sockfd)
+static int			child(int sockfd, struct sockaddr_in *that)
 {
+	struct sockaddr_in	*ip_v4_addr;
+	struct in_addr		ip_addr;
+
 	g_sockfd = sockfd;
 	if (!auth_client(sockfd))
 	{
@@ -30,7 +33,9 @@ static int			child(int sockfd)
 		return (1);
 	}
 	printf("Authentification succeed\n");
-	if (read_loop(sockfd))
+	ip_v4_addr = (struct sockaddr_in*)&that;
+	ip_addr = ip_v4_addr->sin_addr;
+	if (read_loop(sockfd, &ip_addr))
 		printf("Client disconected\n");
 	else
 		printf("An error append, client disconnected\n");
@@ -55,7 +60,7 @@ static int			listen_loop(socklen_t lg, int sockfd)
 				printf("Fork error\n");
 			if (pid == 0)
 			{
-				child(newsockfd);
+				child(newsockfd, &that);
 				exit(0);
 			}
 			else

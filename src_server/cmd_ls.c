@@ -1,137 +1,104 @@
 #include "cmd_ls_serv.h"
+#include "get_args.h"
 
-static char		*str_realloc_cat(char *s1, char *s2, uint64_t *size)
+static int	run_cmd(char *cmd, char **args, int stdio[3])
 {
-	size_t	size_s1;
-	size_t	size_s2;
-	size_t	final_size;
-	char	*res;
+	int				pid;
+	int				status;
+	struct rusage	usage;
+	int				i;
 
-	size_s1 = *size;
-	size_s2 = ft_strlen(s2);
-	final_size = size_s1 + size_s2 + 2;
-	if (!(res = ft_strnew(final_size)))
-		return (NULL);
-	if (*s1 == '\0')
-		ft_strcpy(res, s2);
+	if ((pid = fork()) < 0)
+		return (0);
+	else if (pid == 0)
+	{
+		i = -1;
+		while (++i < 3)
+			if (stdio[i] != -1 && stdio[i] != i)
+				dup2(stdio[i], i);
+		execv(cmd, args);
+		printf("Execv fail for cmd: %s\n", cmd);
+		exit(1);
+	}
 	else
-	{
-		ft_strcpy(res + size_s1 + 1, s2);
-		res[size_s1] = '\0';
-	}
-	ft_memcpy(res, s1, size_s1);
-	*size = final_size;
-	free(s1);
-	return (res);
+		wait4(pid, &status, 0, &usage);
+	return (1);
 }
 
-static char		*get_name(char *name, char *path)
+static int	get_client_port(int fd)
 {
-	char			*full_pathname;
-	char			*final_name;
-	size_t			size_path;
-	struct stat		st;
+	char	buff[4096];
+	char	**args;
+	int		nb_args;
+	int		port;
 
-	size_path = ft_strlen(path);
-	if (!(full_pathname = malloc(sizeof(char) * (ft_strlen(name) + size_path + 2))))
-		return (NULL);
-	ft_strcpy(full_pathname, path);
-	if (path[size_path - 1] != '/')
-		ft_strcat(full_pathname, "/");
-	ft_strcat(full_pathname, name);
-	if (lstat(full_pathname, &st) < 0)
-	{
-		free(full_pathname);
-		return (NULL);
-	}
-	free(full_pathname);
-	if (!(final_name = ft_strnew(ft_strlen(name) + 16)))
-		return (NULL);
-	if (S_ISDIR(st.st_mode))
-		ft_strcpy(final_name, "\e[34m");
-	ft_strcat(final_name, name);
-	ft_strcat(final_name, "\e[0m");
-	return (final_name);
+	buff[4095] = '\0';
+	if (recv_cmd(fd, buff, 4095) < 0)
+		return (-1);
+	if ((nb_args = get_args(buff, &args)) < 2)
+		return (-1);
+	if (ft_strcmp("PORT", args[0]) != 0)
+		return (-1);
+	if ((port = ft_atoi(args[1])) <= 1024 || port > 65536)
+		return (-1);
+	return port;
 }
 
-static char		*get_str_ls(char *path, uint64_t *size)
+static int			init_client(int sockfd, int port, struct in_addr *ip_addr)
 {
-	DIR				*dir;
-	struct dirent	*entry;
-	char			*str;
-	char			*name;
+	struct sockaddr_in  dest;
+	struct hostent		*server;
 
-	*size = 0;
-	if (!(str = ft_strnew(1)))
-		return (NULL);
-	if (!(dir = opendir(path)))
-	{
-		free(str);
-		return (NULL);
-	}
-	while ((entry = readdir(dir)) != NULL)
-	{
-		if (!(name = get_name(entry->d_name, path)))
-		{
-			closedir(dir);
-			free(str);
-			return (NULL);
-		}
-		if (!(str = str_realloc_cat(str, name, size)))
-		{
-			free(name);
-			free(str);
-			closedir(dir);
-			return (NULL);
-		}
-		free(name);
-	}
-	closedir(dir);
-	return (str);
+	ft_memset(&dest, 0, sizeof(dest));
+	dest.sin_addr.s_addr = ip_addr->s_addr;
+	dest.sin_port = htons(port);    
+	dest.sin_family = AF_INET;
+	if (connect(sockfd, (struct sockaddr *)&dest, sizeof(struct sockaddr_in)) < 0)
+		return (0);
+	return (1);
 }
 
-static char		*get_resp(t_string *resp, char *path, t_serv_fs *serv_fs)
+static int	get_client_fd(int fd, t_serv_fs *serv_fs)
 {
-	char		*str;
+	int			port;
+	int			sockfd;
 
-	if (!test_rel_path(path, serv_fs->base_dir))
-		return (NULL);
-	if (!(str = get_str_ls(path, &(resp->size))))
-		return (NULL);
-	return (str);
+	if ((port = get_client_port(fd)) < 0)
+		return (-1);
+
+	if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+	{
+		printf("Socket creation fail\n");
+		return (0);
+	}
+	if (!init_client(sockfd, port, serv_fs->client_addr))
+	{
+		printf("Socket initialization fail\n");
+		return (0);
+	}
+	return (sockfd);
 }
+
 
 int			cmd_ls_serv(int fd, t_serv_fs *serv_fs, char **args, int nb_args)
 {
 	char			*path;
 	t_string		resp;
-	char			*str;
-	uint32_t		conf;
+	int				client_fd;
 
-	conf = MAGIC_CONF_FAIL;
-	if (!(path = recv_string(fd, NULL)))
+	if (nb_args < 2)
+		return (0);
+	printf("verifying ls path: %s\n", args[nb_args - 1]);
+	if (!test_rel_path(args[nb_args - 1], serv_fs->base_dir))
 	{
-		send_data(fd, &conf, sizeof(conf));
+		printf("Path invalid\n");
 		return (0);
 	}
-	if (!(str = get_resp(&resp, path, serv_fs)))
+	if ((client_fd = get_client_fd(fd, serv_fs)) < 0)
 	{
-		free(path);
-		send_data(fd, &conf, sizeof(conf));
+		printf("Error receiving client data socket\n");
 		return (0);
 	}
-	free(path);
-	conf = MAGIC_CONF_SUCCESS;
-	if (!(send_data(fd, &conf, sizeof(conf))))
-	{
-		free(str);
-		return (0);
-	}
-	if (!(send_string(fd, str, resp.size)))
-	{
-		free(str);
-		return (0);
-	}
-	free(str);
+
 	return (1);
 }

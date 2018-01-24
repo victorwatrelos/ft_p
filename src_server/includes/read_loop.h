@@ -13,7 +13,7 @@
 # include "cmd_put_serv.h"
 # include "get_args.h"
 
-int					read_loop(int sockfd);
+int					read_loop(int sockfd, struct in_addr *client_addr);
 
 static const t_cmd	LIST_CMD[NB_CMD] = {{cmd_ls_serv, CMD_LS},
 										{NULL, ""},//CD

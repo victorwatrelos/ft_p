@@ -90,8 +90,9 @@ int				get_args(char *src_str, char ***dest_args)
 	nb_args = count_args(src_str);
 	if (nb_args < 0)
 		return (-1);
-	if ((*dest_args = malloc(sizeof(char *) * nb_args)) == NULL)
+	if ((*dest_args = malloc(sizeof(char *) * nb_args + 1)) == NULL)
 		return (-1);
+	(*dest_args)[nb_args] = NULL;
 	if ((nb_allocated_args = fill_args(*dest_args, src_str)) != nb_args)
 	{
 		free_args(dest_args, nb_allocated_args);
